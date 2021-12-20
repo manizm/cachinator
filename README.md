@@ -1,4 +1,5 @@
 # Cachinator
+[![Tests](https://github.com/manizm/cachinator/actions/workflows/node.js.yml/badge.svg?branch=main)](https://github.com/manizm/cachinator/actions/workflows/node.js.yml)
 A cache service factory written in nodejs and typescript
 
 ## Basic usage
