@@ -2,7 +2,7 @@
 A cache service factory written in nodejs and typescript
 
 ## Basic usage
-Check it out in test/MemCacheTest.ts
+Check it out in example/MemCacheTest.ts
 
 ## Todo
 - add actual tests
