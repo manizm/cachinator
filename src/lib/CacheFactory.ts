@@ -2,12 +2,17 @@ import {CacheStore} from './CacheStore';
 import {NotFound} from './common/errors/NotFound';
 
 export class CacheFactory {
-  static #stores: Map<string, CacheStore<unknown, unknown>>;
-  static addStore(key: string, store: CacheStore<unknown, unknown>) {
+  #stores: Map<string, CacheStore<unknown, unknown>>;
+
+  constructor() {
+    this.#stores = new Map();
+  }
+
+  addStore(key: string, store: CacheStore<unknown, unknown>) {
     this.#stores.set(key, store);
   }
 
-  static getStore(key: string): CacheStore<unknown, unknown> {
+  getStore(key: string): CacheStore<unknown, unknown> {
     const store = this.#stores.get(key);
 
     if (!store) throw new NotFound('Cache Store does not exist');
@@ -15,7 +20,7 @@ export class CacheFactory {
     return store;
   }
 
-  static removeStore(key: string): boolean {
+  removeStore(key: string): boolean {
     return this.#stores.delete(key);
   }
 }
