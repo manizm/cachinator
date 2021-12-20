@@ -5,6 +5,7 @@ A cache service factory written in nodejs and typescript
 Check it out in example/MemCacheTest.ts
 
 ## Todo
-- add actual tests
+- ~~add actual tests~~
+- get 100% code coverage
 - create detailed readme
 - create cache store for redis client
