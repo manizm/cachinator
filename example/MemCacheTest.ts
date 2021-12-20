@@ -6,12 +6,13 @@ export interface MDataType {
 }
 
 (() => {
-  CacheFactory.addStore(
+  const cacheFactory = new CacheFactory();
+  cacheFactory.addStore(
     'nameStore',
     new MemCache({defaultTTL: 0, maxKeys: 0, ttlCheckTimer: 0})
   );
 
-  const thisCache = CacheFactory.getStore('nameStore') as MemCache<
+  const thisCache = cacheFactory.getStore('nameStore') as MemCache<
     MDataType,
     Date
   >;
