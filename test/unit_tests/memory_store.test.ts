@@ -1,5 +1,7 @@
+import {InvalidArgument} from '../../src/lib/common/errors/InvalidArgument';
 import {CacheFactory} from '../../src/lib/CacheFactory';
 import {MemCache} from '../../src/lib/MemCache/MemCache';
+import {MaxSizeReached} from '../../src/lib/common/errors/MaxSizeReached';
 
 export interface MDataType {
   name: string;
@@ -59,16 +61,50 @@ describe('store', () => {
     expect(isStored).toEqual(true);
   });
 
+  it('should throw InvalidArgument when trying to get without a key', () => {
+    const key: unknown = undefined;
+
+    expect(() => {
+      store.get(key as Date);
+    }).toThrowError(InvalidArgument);
+  });
+
+  it('should throw InvalidArgument when trying to set without a key', () => {
+    const {data} = createBasic();
+    const key: unknown = undefined;
+
+    expect(() => {
+      store.set(key as Date, data);
+    }).toThrowError(InvalidArgument);
+  });
+
+  it('should throw InvalidArgument when trying to set without data', () => {
+    const data: unknown = undefined;
+
+    expect(() => {
+      store.set(new Date(), data as MDataType);
+    }).toThrowError(InvalidArgument);
+  });
+
+  it('should throw InvalidArgument when tryoing to delete without a key', () => {
+    const key: unknown = undefined;
+
+    expect(() => {
+      store.del(key as Date);
+    }).toThrowError(InvalidArgument);
+  });
+
   it('should delete the key and its data properly', () => {
     const keys = store.getKeys();
     const [key] = keys;
+
     expect(key).toBeDefined();
 
     const hits = store.getHits();
     const misses = store.getMisses();
     const size = store.getSize();
-
     const data = store.get(key);
+
     expect(data).toBeDefined();
 
     const isDeleted = store.del(key);
@@ -98,6 +134,27 @@ describe('store', () => {
 
     // re-reset stats because of previous "get"
     store.flushAll();
+  });
+
+  it('should throw MaxSizeReached error when max store size is configured', () => {
+    const storeKey = 'MAX_STORE';
+
+    cacheStores.addStore(
+      storeKey,
+      new MemCache({
+        defaultTTL: 0,
+        maxKeys: 2,
+        ttlCheckTimer: 0,
+      })
+    );
+
+    const store = cacheStores.getStore(storeKey);
+    const {key, data} = createBasic();
+
+    store.set(key, data);
+    store.set(new Date(), data);
+
+    expect(() => store.set(new Date(), data)).toThrowError(MaxSizeReached);
   });
 
   describe('with no expiration', () => {

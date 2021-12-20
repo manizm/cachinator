@@ -42,6 +42,7 @@ describe('factory', () => {
 
   it('should properly return keys', () => {
     const keys = cacheStores.getKeys();
+
     expect(keys).toHaveLength(1);
     expect(keys.includes(testKey)).toEqual(true);
   });
@@ -49,6 +50,7 @@ describe('factory', () => {
   it('should return a store', () => {
     const keys = cacheStores.getKeys();
     const [key] = keys as string[];
+
     store = cacheStores.getStore(key) as MemCache<MDataType, Date>;
 
     expect(store).toBeInstanceOf(MemCache);
@@ -113,6 +115,14 @@ describe('factory', () => {
         cacheStores.getStore(ik as string);
       }).toThrowError(InvalidArgument);
     });
+  });
+
+  it('should throw error when removing store without a valid key', () => {
+    const key: unknown = undefined;
+
+    expect(() => {
+      cacheStores.removeStore(key as string);
+    }).toThrowError(InvalidArgument);
   });
 
   it('should allow removing a store by valid key', () => {
