@@ -20,6 +20,10 @@ export class CacheFactory {
     return store;
   }
 
+  getKeys(): unknown[] {
+    return [...this.#stores.keys()];
+  }
+
   removeStore(key: string): boolean {
     return this.#stores.delete(key);
   }
