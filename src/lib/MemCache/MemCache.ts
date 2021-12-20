@@ -50,12 +50,23 @@ export class MemCache<DT, CKT> implements CacheStore<DT, CKT> {
     this.#ttlTimeout = undefined;
   }
 
+  #handleStats(data: DT | undefined): void {
+    if (!data) {
+      ++this.#stats.misses;
+      return;
+    }
+
+    ++this.#stats.hits;
+  }
+
   get(key: CKT): DT | undefined {
     if (!key) {
       throw new InvalidArgument('cannot get value without a key');
     }
 
     const data = this.#storeData.get(key);
+
+    this.#handleStats(data);
 
     return data;
   }
@@ -116,6 +127,10 @@ export class MemCache<DT, CKT> implements CacheStore<DT, CKT> {
     this.#startTTLValidation();
 
     return true;
+  }
+
+  getKeys(): CKT[] {
+    return [...this.#storeData.keys()];
   }
 
   getSize(): number {
