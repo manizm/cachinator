@@ -10,7 +10,7 @@
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
-    "prepare": "npm run build",
+    "prepare": "npm run compile:build",
     "pretest": "npm run compile",
     "posttest": "npm run lint",
     "compile:build": "tsc -p build.tsconfig.json"
