@@ -5,7 +5,9 @@
     "outDir": "build",
     "paths": {
       "src/*": ["./src/*"]
-    }
+    },
+    "lib": ["ES2021"],
+    "target": "ES2021"
   },
   "include": [
     "src/**/*.ts",
