@@ -2,7 +2,7 @@
   "name": "cachinator",
   "version": "1.0.0",
   "description": "A cache service factory written in nodejs and typescript",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "test": "jest --coverage",
     "test:watch": "jest --watch",
@@ -10,9 +10,10 @@
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
-    "prepare": "npm run compile",
+    "prepare": "npm run build",
     "pretest": "npm run compile",
-    "posttest": "npm run lint"
+    "posttest": "npm run lint",
+    "compile:build": "tsc -p build.tsconfig.json"
   },
   "repository": {
     "type": "git",
