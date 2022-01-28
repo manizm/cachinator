@@ -24,8 +24,8 @@ export class CacheFactory {
     }
 
     // don't let the users implicitly override an added store
-    if (this.getKeys().includes(key)) {
-      throw new DuplicateKey(`key: ${key} already exists`);
+    if (this.#stores.has(key)) {
+      throw new DuplicateKey(`key: ${key} already exists!`);
     }
 
     this.#stores.set(key, store);
