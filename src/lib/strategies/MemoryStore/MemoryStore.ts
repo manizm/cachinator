@@ -1,8 +1,8 @@
 import {CacheStore} from '../CacheStore';
-import {InvalidArgument} from '../common/errors/InvalidArgument';
-import {MaxSizeReached} from '../common/errors/MaxSizeReached';
+import {InvalidArgument} from '../../common/errors/InvalidArgument';
+import {MaxSizeReached} from '../../common/errors/MaxSizeReached';
 import {MemCacheOptions} from './MemCacheOptions';
-import {Stats} from './Stats';
+import {Stats} from '../Stats';
 
 const DEFAULT_TTL_TIMEOUT = 1000;
 
@@ -12,7 +12,7 @@ const DEFAULT_TTL_TIMEOUT = 1000;
  * @typeParam CKT - Cache key type
  * @public
  */
-export class MemCache<DT, CKT> implements CacheStore<DT, CKT> {
+export class MemoryStore<DT, CKT> implements CacheStore<DT, CKT> {
   /**
    * Options for memory cache type store
    * @internal

@@ -1,6 +1,6 @@
 import {InvalidArgument} from '../../src/lib/common/errors/InvalidArgument';
-import {CacheFactory} from '../../src/lib/CacheFactory';
-import {MemCache} from '../../src/lib/MemCache/MemCache';
+import {CacheContainer} from '../../src/lib/CacheContainer';
+import {MemoryStore} from '../../src/lib/strategies/MemoryStore/MemoryStore';
 import {MaxSizeReached} from '../../src/lib/common/errors/MaxSizeReached';
 
 export interface MDataType {
@@ -15,14 +15,14 @@ function createBasic(): {key: Date; data: MDataType} {
 }
 
 describe('store', () => {
-  const cacheStores = new CacheFactory();
+  const cacheStores = new CacheContainer();
 
   const key = 'NO_TTL';
-  let store: MemCache<MDataType, Date>;
+  let store: MemoryStore<MDataType, Date>;
 
   cacheStores.addStore(
     key,
-    new MemCache({
+    new MemoryStore({
       defaultTTL: 0,
       maxKeys: 0,
       ttlCheckTimer: 0,
@@ -30,9 +30,9 @@ describe('store', () => {
   );
 
   it('should return a memory store', () => {
-    store = cacheStores.getStore(key) as MemCache<MDataType, Date>;
+    store = cacheStores.getStore(key) as MemoryStore<MDataType, Date>;
 
-    expect(store).toBeInstanceOf(MemCache);
+    expect(store).toBeInstanceOf(MemoryStore);
   });
 
   it('should have size, hits, misses and keys length to be 0', () => {
@@ -141,7 +141,7 @@ describe('store', () => {
 
     cacheStores.addStore(
       storeKey,
-      new MemCache({
+      new MemoryStore({
         defaultTTL: 0,
         maxKeys: 2,
         ttlCheckTimer: 0,

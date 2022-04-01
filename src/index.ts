@@ -1,1 +1,1 @@
-export * from './lib/CacheFactory';
+export * from './lib/CacheContainer';

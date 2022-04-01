@@ -1,9 +1,9 @@
-import {CacheStore} from './CacheStore';
+import {CacheStore} from './strategies/CacheStore';
 import {DuplicateKey} from './common/errors/DuplicateKey';
 import {InvalidArgument} from './common/errors/InvalidArgument';
 import {NotFound} from './common/errors/NotFound';
 
-export class CacheFactory {
+export class CacheContainer {
   /**
    * container for all the cache stores
    */
@@ -61,9 +61,17 @@ export class CacheFactory {
    * @param key
    * @returns
    */
-  removeStore(key: string): boolean {
+  removeStore(key: string, shouldFlush = false): boolean {
     if (typeof key !== 'string') {
       throw new InvalidArgument('a valid key is required to delete a store');
+    }
+
+    const store = this.#stores.get(key);
+
+    if (!store) return true;
+
+    if (shouldFlush) {
+      store.flushAll();
     }
 
     return this.#stores.delete(key);

@@ -1,15 +1,15 @@
 import {DuplicateKey} from '../../src/lib/common/errors/DuplicateKey';
-import {CacheFactory} from '../../src/lib/CacheFactory';
+import {CacheContainer} from '../../src/lib/CacheContainer';
 import {NotFound} from '../../src/lib/common/errors/NotFound';
-import {MemCache} from '../../src/lib/MemCache/MemCache';
+import {MemoryStore} from '../../src/lib/strategies/MemoryStore/MemoryStore';
 import {InvalidArgument} from '../../src/lib/common/errors/InvalidArgument';
 
 export interface MDataType {
   name: string;
 }
 
-function createBasicStore(): MemCache<unknown, unknown> {
-  return new MemCache({
+function createBasicStore(): MemoryStore<unknown, unknown> {
+  return new MemoryStore({
     defaultTTL: 0,
     maxKeys: 0,
     ttlCheckTimer: 0,
@@ -22,8 +22,8 @@ function getInvalidKeys(): unknown[] {
 
 // TODO: Implement Test for creating different kinds of stores, when Redis store is added
 describe('factory', () => {
-  const cacheStores = new CacheFactory();
-  let store: MemCache<MDataType, Date>;
+  const cacheStores = new CacheContainer();
+  let store: MemoryStore<MDataType, Date>;
   const testKey = 'NO_TTL';
 
   it('should should throw error when store not found', () => {
@@ -51,9 +51,9 @@ describe('factory', () => {
     const keys = cacheStores.getKeys();
     const [key] = keys as string[];
 
-    store = cacheStores.getStore(key) as MemCache<MDataType, Date>;
+    store = cacheStores.getStore(key) as MemoryStore<MDataType, Date>;
 
-    expect(store).toBeInstanceOf(MemCache);
+    expect(store).toBeInstanceOf(MemoryStore);
   });
 
   it('should be able to add more stores of same types', () => {
@@ -70,7 +70,7 @@ describe('factory', () => {
       cacheStores.getStore(k as string)
     );
 
-    expect(cacheStores.getStore(newKey)).toBeInstanceOf(MemCache);
+    expect(cacheStores.getStore(newKey)).toBeInstanceOf(MemoryStore);
     expect(newKeys.includes(newKey)).toEqual(true);
     expect(newKeys.length).toBeGreaterThan(keysBeforeNewStore.length);
     expect(storesBeforeNewStore.length).toBeLessThan(
@@ -79,7 +79,7 @@ describe('factory', () => {
     expect(storesAfterAddition.length - storesBeforeNewStore.length).toEqual(1);
 
     storesBeforeNewStore.forEach(s => {
-      expect(s).toBeInstanceOf(MemCache);
+      expect(s).toBeInstanceOf(MemoryStore);
     });
   });
 
