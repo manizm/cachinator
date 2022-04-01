@@ -1,4 +1,4 @@
-import {CacheStore} from '../CacheStore';
+import {BaseCacheStrategy} from '../BaseCacheStrategy';
 import {InvalidArgument} from '../../common/errors/InvalidArgument';
 import {MaxSizeReached} from '../../common/errors/MaxSizeReached';
 import {MemCacheOptions} from './MemCacheOptions';
@@ -12,7 +12,7 @@ const DEFAULT_TTL_TIMEOUT = 3600000;
  * @typeParam CKT - Cache key type
  * @public
  */
-export class MemoryStore<DT, CKT> implements CacheStore<DT, CKT> {
+export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
   /**
    * Options for memory cache type store
    * @internal

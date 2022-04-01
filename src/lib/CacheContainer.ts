@@ -1,4 +1,4 @@
-import {CacheStore} from './strategies/CacheStore';
+import {BaseCacheStrategy} from './strategies/BaseCacheStrategy';
 import {DuplicateKey} from './common/errors/DuplicateKey';
 import {InvalidArgument} from './common/errors/InvalidArgument';
 import {NotFound} from './common/errors/NotFound';
@@ -7,7 +7,7 @@ export class CacheContainer {
   /**
    * container for all the cache stores
    */
-  #stores: Map<string, CacheStore<unknown, unknown>>;
+  #stores: Map<string, BaseCacheStrategy<unknown, unknown>>;
 
   constructor() {
     this.#stores = new Map();
@@ -18,7 +18,7 @@ export class CacheContainer {
    * @param key
    * @param store
    */
-  addStore(key: string, store: CacheStore<unknown, unknown>) {
+  addStore(key: string, store: BaseCacheStrategy<unknown, unknown>) {
     if (typeof key !== 'string') {
       throw new InvalidArgument('key must be a string for adding cache store');
     }
@@ -36,7 +36,7 @@ export class CacheContainer {
    * @param key
    * @returns
    */
-  getStore(key: string): CacheStore<unknown, unknown> {
+  getStore(key: string): BaseCacheStrategy<unknown, unknown> {
     if (typeof key !== 'string') {
       throw new InvalidArgument('a valid key is required to get store');
     }

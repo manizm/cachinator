@@ -1,4 +1,4 @@
-export interface CacheStore<DataType, CacheKeyType> {
+export interface BaseCacheStrategy<DataType, CacheKeyType> {
   /**
    * Returns number of time cache fetch by key was successful
    */
