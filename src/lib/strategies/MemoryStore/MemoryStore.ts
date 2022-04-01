@@ -4,7 +4,7 @@ import {MaxSizeReached} from '../../common/errors/MaxSizeReached';
 import {MemCacheOptions} from './MemCacheOptions';
 import {Stats} from '../Stats';
 
-const DEFAULT_TTL_TIMEOUT = 1000;
+const DEFAULT_TTL_TIMEOUT = 3600000;
 
 /**
  * In memory cache store
