@@ -23,7 +23,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * stored keys that should be expired. Used in TTL validation
    * @internal
    */
-  #expiringKeys: Map<number, CKT>;
+  #expiringKeys: Map<CKT, number>;
 
   /**
    * Cached data
@@ -64,6 +64,20 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
   }
 
   /**
+   * Checks if currentTime has passed key's TTL
+   * @param  keyTTL
+   * @returns boolean indicating if key has expired or not
+   */
+  #keyIsExpired(keyTTL: number | undefined): boolean {
+    if (!keyTTL) {
+      return false;
+    }
+
+    const now = new Date();
+    return keyTTL <= now.getTime();
+  }
+
+  /**
    * If default ttl options are provided, it will start timeout to periodically
    * check the expired keys and remove them from the store
    * @internal
@@ -73,12 +87,10 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
     if (this.#options.defaultTTL) {
       const timer = this.#options.ttlCheckTimer || DEFAULT_TTL_TIMEOUT;
 
-      this.#ttlTimeout = setTimeout(() => {
-        const now = new Date();
-
-        this.#expiringKeys.forEach((value, key) => {
-          if (now.getTime() <= key) {
-            this.del(value);
+      this.#ttlTimeout = setInterval(() => {
+        this.#expiringKeys.forEach((keyTTL, key) => {
+          if (this.#keyIsExpired(keyTTL)) {
+            this.del(key);
           }
         });
       }, timer);
@@ -90,7 +102,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * @internal
    */
   #stopTTLValidation() {
-    if (this.#ttlTimeout) clearTimeout(this.#ttlTimeout);
+    if (this.#ttlTimeout) clearInterval(this.#ttlTimeout);
     this.#ttlTimeout = undefined;
   }
 
@@ -116,6 +128,10 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
   get(key: CKT): DT | undefined {
     if (!key) {
       throw new InvalidArgument('cannot get value without a key');
+    }
+
+    if (this.#keyIsExpired(this.#expiringKeys.get(key))) {
+      this.del(key);
     }
 
     const data = this.#storeData.get(key);
@@ -160,7 +176,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
 
     if (!ignoreTTL && ttl) {
       try {
-        this.#expiringKeys.set(ttl, key);
+        this.#expiringKeys.set(key, ttl);
       } catch (err) {
         // revert stored key/value if setting expiration fails
         this.#storeData.delete(key);
