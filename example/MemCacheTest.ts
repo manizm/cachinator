@@ -1,18 +1,17 @@
-import {CacheFactory} from '../src/lib/CacheFactory';
-import {MemCache} from '../src/lib/MemCache/MemCache';
+import {CacheContainer, MemoryStore} from '../src';
 
 export interface MDataType {
   name: string;
 }
 
 (() => {
-  const cacheFactory = new CacheFactory();
-  cacheFactory.addStore(
+  const cacheContainer = new CacheContainer();
+  cacheContainer.addStore(
     'nameStore',
-    new MemCache({defaultTTL: 0, maxKeys: 0, ttlCheckTimer: 0})
+    new MemoryStore({defaultTTL: 0, maxKeys: 0, ttlCheckTimer: 0})
   );
 
-  const thisCache = cacheFactory.getStore('nameStore') as MemCache<
+  const thisCache = cacheContainer.getStore('nameStore') as MemoryStore<
     MDataType,
     Date
   >;
