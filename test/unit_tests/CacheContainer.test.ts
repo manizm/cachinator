@@ -126,15 +126,27 @@ describe('factory', () => {
   });
 
   it('should allow removing a store by valid key', () => {
+    const storeToRemoveKey = 'TO_REMOVE_STORE';
+    cacheStores.addStore(storeToRemoveKey, createBasicStore());
     const keysBeforeRemoval = cacheStores.getKeys();
-    const [key] = keysBeforeRemoval;
 
-    const storeIsRemoved = cacheStores.removeStore(key);
+    const storeIsRemoved = cacheStores.removeStore(storeToRemoveKey, true);
 
     expect(storeIsRemoved).toEqual(true);
     expect(cacheStores.getKeys().length).toBeLessThan(keysBeforeRemoval.length);
     expect(() => {
-      cacheStores.getStore(key);
+      cacheStores.getStore(storeToRemoveKey);
+    }).toThrowError(NotFound);
+  });
+
+  it('should return true if no store found', () => {
+    const storeToRemoveKey = 'RANDOM_STORE_KEY';
+
+    const storeIsRemoved = cacheStores.removeStore(storeToRemoveKey);
+
+    expect(storeIsRemoved).toEqual(true);
+    expect(() => {
+      cacheStores.getStore(storeToRemoveKey);
     }).toThrowError(NotFound);
   });
 });
