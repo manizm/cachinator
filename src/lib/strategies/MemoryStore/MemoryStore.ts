@@ -2,7 +2,7 @@ import {BaseCacheStrategy} from '../BaseCacheStrategy';
 import {InvalidArgument} from '../../common/errors/InvalidArgument';
 import {MaxSizeReached} from '../../common/errors/MaxSizeReached';
 import {MemCacheOptions} from './MemCacheOptions';
-import {Stats} from '../Stats';
+import {Stats} from './Stats';
 
 const DEFAULT_TTL_TIMEOUT = 3600000;
 
