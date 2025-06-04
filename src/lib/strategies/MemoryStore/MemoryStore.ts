@@ -82,19 +82,21 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * check the expired keys and remove them from the store
    * @internal
    */
-  #startTTLValidation() {
+  #startTTLValidation(force = false) {
     if (this.#ttlTimeout) return;
-    if (this.#options.defaultTTL) {
-      const timer = this.#options.ttlCheckTimer || DEFAULT_TTL_TIMEOUT;
-
-      this.#ttlTimeout = setInterval(() => {
-        this.#expiringKeys.forEach((keyTTL, key) => {
-          if (this.#keyIsExpired(keyTTL)) {
-            this.del(key);
-          }
-        });
-      }, timer);
+    if (!force && !this.#options.defaultTTL) {
+      return;
     }
+
+    const timer = this.#options.ttlCheckTimer || DEFAULT_TTL_TIMEOUT;
+
+    this.#ttlTimeout = setInterval(() => {
+      this.#expiringKeys.forEach((keyTTL, key) => {
+        if (this.#keyIsExpired(keyTTL)) {
+          this.del(key);
+        }
+      });
+    }, timer);
   }
 
   /**
@@ -179,6 +181,9 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
     this.#storeData.set(key, data);
 
     if (!ignoreTTL && expiresAt !== undefined) {
+      if (!this.#ttlTimeout) {
+        this.#startTTLValidation(true);
+      }
       try {
         this.#expiringKeys.set(key, expiresAt);
       } catch (err) {

@@ -181,6 +181,30 @@ describe('store', () => {
 
       jest.useRealTimers();
     });
+
+    it('should expire keys with custom ttl even when default ttl is 0', () => {
+      jest.useFakeTimers();
+
+      const storeKey = 'CUSTOM_TTL_TEST';
+      cacheStores.addStore(
+        storeKey,
+        new MemoryStore({defaultTTL: 0, maxKeys: 0, ttlCheckTimer: 10})
+      );
+
+      const store = cacheStores.getStore(storeKey) as MemoryStore<MDataType, Date>;
+      const {key, data} = createBasic();
+
+      store.set(key, data, false, 30);
+
+      jest.advanceTimersByTime(20);
+      expect(store.get(key)).toEqual(data);
+
+      jest.advanceTimersByTime(20);
+      jest.runOnlyPendingTimers();
+      expect(store.get(key)).toBeUndefined();
+
+      jest.useRealTimers();
+    });
   });
 
   describe('with no expiration', () => {
