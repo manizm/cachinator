@@ -93,7 +93,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
     this.#ttlTimeout = setInterval(() => {
       this.#expiringKeys.forEach((keyTTL, key) => {
         if (this.#keyIsExpired(keyTTL)) {
-          this.del(key);
+          void this.del(key);
         }
       });
     }, timer);
@@ -133,7 +133,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
     }
 
     if (this.#keyIsExpired(this.#expiringKeys.get(key))) {
-      this.del(key);
+      void this.del(key);
     }
 
     const data = this.#storeData.get(key);
@@ -151,7 +151,12 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * @param ttl if passed, it will set a custom expiration time for the key/value in store
    * @returns boolean indicating, if storing the key/value in store pair was successful or not
    */
-  async set(key: CKT, data: DT, ignoreTTL = false, ttl?: number): Promise<boolean> {
+  async set(
+    key: CKT,
+    data: DT,
+    ignoreTTL = false,
+    ttl?: number,
+  ): Promise<boolean> {
     if (key === undefined) {
       throw new InvalidArgument('cannot set value without a key');
     }
