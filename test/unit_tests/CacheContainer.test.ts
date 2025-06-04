@@ -100,11 +100,9 @@ describe('factory', () => {
   });
 
   it('should throw InvalidArgument when removing store with non-string key', () => {
-    const s = createBasicStore();
-
     getInvalidKeys().forEach(ik => {
       expect(() => {
-        cacheStores.addStore(ik as string, s);
+        cacheStores.removeStore(ik as string);
       }).toThrowError(InvalidArgument);
     });
   });
