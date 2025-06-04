@@ -49,7 +49,7 @@ export class CacheContainer {
   }
 
   /**
-   * returns the keys of all cahce stores in container
+   * returns the keys of all cache stores in container
    * @returns
    */
   getKeys(): string[] {
