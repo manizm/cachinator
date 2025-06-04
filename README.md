@@ -43,6 +43,17 @@ store.set(new Date(), {name: 'ali'});
 console.log(store.get(new Date()));
 ```
 
+### Node Redis Example
+
+To run the Redis example you need a running Redis server and the
+[node-redis](https://github.com/redis/node-redis) package:
+
+```bash
+pnpm add redis
+```
+
+`example/RedisExample.ts` demonstrates using `RedisStore` with a real client.
+
 ## Todo
 
 - ~~add actual tests~~
