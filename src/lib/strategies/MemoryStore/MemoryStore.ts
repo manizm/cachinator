@@ -166,17 +166,21 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
       );
     }
 
+    let expiresAt: number | undefined;
     if (!ignoreTTL) {
       if (!ttl && this.#options.defaultTTL) {
         ttl = this.#options.defaultTTL;
+      }
+      if (ttl) {
+        expiresAt = Date.now() + ttl;
       }
     }
 
     this.#storeData.set(key, data);
 
-    if (!ignoreTTL && ttl) {
+    if (!ignoreTTL && expiresAt) {
       try {
-        this.#expiringKeys.set(key, ttl);
+        this.#expiringKeys.set(key, expiresAt);
       } catch (err) {
         // revert stored key/value if setting expiration fails
         this.#storeData.delete(key);
@@ -197,6 +201,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
       throw new InvalidArgument('cannot delete value without a key');
     }
 
+    this.#expiringKeys.delete(key);
     return this.#storeData.delete(key);
   }
 
