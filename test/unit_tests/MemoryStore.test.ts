@@ -35,108 +35,104 @@ describe('store', () => {
     expect(store).toBeInstanceOf(MemoryStore);
   });
 
-  it('should have size, hits, misses and keys length to be 0', () => {
+  it('should have size, hits, misses and keys length to be 0', async () => {
     expect(store.getHits()).toBe(0);
     expect(store.getMisses()).toBe(0);
-    expect(store.getSize()).toBe(0);
-    expect(store.getKeys()).toHaveLength(0);
+    expect(await store.getSize()).toBe(0);
+    expect((await store.getKeys())).toHaveLength(0);
   });
 
-  it('should return undefined when tried to get non-inserted item', () => {
-    expect(store.get(new Date())).toBeUndefined();
+  it('should return undefined when tried to get non-inserted item', async () => {
+    expect(await store.get(new Date())).toBeUndefined();
     expect(store.getMisses()).toBe(1);
   });
 
-  it('should properly set and get the data', () => {
+  it('should properly set and get the data', async () => {
     const {key, data} = createBasic();
 
-    const isStored = store.set(key, data);
-    const storedData = store.get(key);
+    const isStored = await store.set(key, data);
+    const storedData = await store.get(key);
 
     expect(storedData).toEqual(data);
     expect(store.getHits()).toBe(1);
     expect(store.getMisses()).toBeGreaterThan(0); // because of previous test
-    expect(store.getSize()).toBe(1);
-    expect(store.getKeys()[0]).toEqual(key);
+    expect(await store.getSize()).toBe(1);
+    expect((await store.getKeys())[0]).toEqual(key);
     expect(isStored).toEqual(true);
   });
 
-  it('should throw InvalidArgument when trying to get without a key', () => {
+  it('should throw InvalidArgument when trying to get without a key', async () => {
     const key: unknown = undefined;
 
-    expect(() => {
-      store.get(key as Date);
-    }).toThrowError(InvalidArgument);
+    await expect(store.get(key as Date)).rejects.toThrowError(InvalidArgument);
   });
 
-  it('should throw InvalidArgument when trying to set without a key', () => {
+  it('should throw InvalidArgument when trying to set without a key', async () => {
     const {data} = createBasic();
     const key: unknown = undefined;
 
-    expect(() => {
-      store.set(key as Date, data);
-    }).toThrowError(InvalidArgument);
+    await expect(store.set(key as Date, data)).rejects.toThrowError(
+      InvalidArgument,
+    );
   });
 
-  it('should throw InvalidArgument when trying to set without data', () => {
+  it('should throw InvalidArgument when trying to set without data', async () => {
     const data: unknown = undefined;
 
-    expect(() => {
-      store.set(new Date(), data as MDataType);
-    }).toThrowError(InvalidArgument);
+    await expect(store.set(new Date(), data as MDataType)).rejects.toThrowError(
+      InvalidArgument,
+    );
   });
 
-  it('should throw InvalidArgument when tryoing to delete without a key', () => {
+  it('should throw InvalidArgument when tryoing to delete without a key', async () => {
     const key: unknown = undefined;
 
-    expect(() => {
-      store.del(key as Date);
-    }).toThrowError(InvalidArgument);
+    await expect(store.del(key as Date)).rejects.toThrowError(InvalidArgument);
   });
 
-  it('should delete the key and its data properly', () => {
-    const keys = store.getKeys();
+  it('should delete the key and its data properly', async () => {
+    const keys = await store.getKeys();
     const [key] = keys;
 
     expect(key).toBeDefined();
 
     const hits = store.getHits();
     const misses = store.getMisses();
-    const size = store.getSize();
-    const data = store.get(key);
+    const size = await store.getSize();
+    const data = await store.get(key);
 
     expect(data).toBeDefined();
 
-    const isDeleted = store.del(key);
-    const afterDeletedData = store.get(key);
+    const isDeleted = await store.del(key);
+    const afterDeletedData = await store.get(key);
 
     expect(isDeleted).toEqual(true);
     expect(afterDeletedData).toBeUndefined();
     expect(store.getHits()).toBeGreaterThan(hits);
     expect(store.getMisses()).toBeGreaterThan(misses);
-    expect(store.getSize()).toBeLessThan(size);
-    expect(store.getKeys().length).toBeLessThan(keys.length);
+    expect(await store.getSize()).toBeLessThan(size);
+    expect((await store.getKeys()).length).toBeLessThan(keys.length);
   });
 
-  it('should flush and reset all the stats', () => {
+  it('should flush and reset all the stats', async () => {
     const {key, data} = createBasic();
 
-    store.set(key, data);
+    await store.set(key, data);
 
-    const isFlushed = store.flushAll();
+    const isFlushed = await store.flushAll();
 
     expect(isFlushed).toEqual(true);
     expect(store.getHits()).toEqual(0);
     expect(store.getMisses()).toEqual(0);
-    expect(store.getSize()).toEqual(0);
-    expect(store.getKeys().length).toEqual(0);
-    expect(store.get(key)).toBeUndefined();
+    expect(await store.getSize()).toEqual(0);
+    expect((await store.getKeys()).length).toEqual(0);
+    expect(await store.get(key)).toBeUndefined();
 
     // re-reset stats because of previous "get"
-    store.flushAll();
+    await store.flushAll();
   });
 
-  it('should throw MaxSizeReached error when max store size is configured', () => {
+  it('should throw MaxSizeReached error when max store size is configured', async () => {
     const storeKey = 'MAX_STORE';
 
     cacheStores.addStore(
@@ -151,14 +147,14 @@ describe('store', () => {
     const store = cacheStores.getStore(storeKey);
     const {key, data} = createBasic();
 
-    store.set(key, data);
-    store.set(new Date(), data);
+    await store.set(key, data);
+    await store.set(new Date(), data);
 
-    expect(() => store.set(new Date(), data)).toThrowError(MaxSizeReached);
+    await expect(store.set(new Date(), data)).rejects.toThrowError(MaxSizeReached);
   });
 
   describe('expiration handling', () => {
-    it('should expire keys based on ttl', () => {
+    it('should expire keys based on ttl', async () => {
       jest.useFakeTimers();
 
       const storeKey = 'TTL_TEST';
@@ -170,19 +166,19 @@ describe('store', () => {
       const store = cacheStores.getStore(storeKey) as MemoryStore<MDataType, Date>;
       const {key, data} = createBasic();
 
-      store.set(key, data, false, 30);
+      await store.set(key, data, false, 30);
 
       jest.advanceTimersByTime(20);
-      expect(store.get(key)).toEqual(data);
+      expect(await store.get(key)).toEqual(data);
 
       jest.advanceTimersByTime(20);
       jest.runOnlyPendingTimers();
-      expect(store.get(key)).toBeUndefined();
+      expect(await store.get(key)).toBeUndefined();
 
       jest.useRealTimers();
     });
 
-    it('should expire keys with custom ttl even when default ttl is 0', () => {
+    it('should expire keys with custom ttl even when default ttl is 0', async () => {
       jest.useFakeTimers();
 
       const storeKey = 'CUSTOM_TTL_TEST';
@@ -194,14 +190,14 @@ describe('store', () => {
       const store = cacheStores.getStore(storeKey) as MemoryStore<MDataType, Date>;
       const {key, data} = createBasic();
 
-      store.set(key, data, false, 30);
+      await store.set(key, data, false, 30);
 
       jest.advanceTimersByTime(20);
-      expect(store.get(key)).toEqual(data);
+      expect(await store.get(key)).toEqual(data);
 
       jest.advanceTimersByTime(20);
       jest.runOnlyPendingTimers();
-      expect(store.get(key)).toBeUndefined();
+      expect(await store.get(key)).toBeUndefined();
 
       jest.useRealTimers();
     });

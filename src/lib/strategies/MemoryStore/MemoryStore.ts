@@ -127,7 +127,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * @param key key for the key/value pair in store map
    * @returns value from the cache of type DT or undefined if nothing found
    */
-  get(key: CKT): DT | undefined {
+  async get(key: CKT): Promise<DT | undefined> {
     if (!key) {
       throw new InvalidArgument('cannot get value without a key');
     }
@@ -151,7 +151,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * @param ttl if passed, it will set a custom expiration time for the key/value in store
    * @returns boolean indicating, if storing the key/value in store pair was successful or not
    */
-  set(key: CKT, data: DT, ignoreTTL = false, ttl?: number): boolean {
+  async set(key: CKT, data: DT, ignoreTTL = false, ttl?: number): Promise<boolean> {
     if (key === undefined) {
       throw new InvalidArgument('cannot set value without a key');
     }
@@ -160,7 +160,10 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
       throw new InvalidArgument('cannot set undefined or null');
     }
 
-    if (this.#options.maxKeys > 0 && this.getSize() === this.#options.maxKeys) {
+    if (
+      this.#options.maxKeys > 0 &&
+      (await this.getSize()) === this.#options.maxKeys
+    ) {
       throw new MaxSizeReached(
         `max keys limit: ${
           this.#options.maxKeys
@@ -201,7 +204,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * @param key key for the key/value pair in store map
    * @returns a boolean, indicating if deleting the key/value was successful or not
    */
-  del(key: CKT): boolean {
+  async del(key: CKT): Promise<boolean> {
     if (key === undefined) {
       throw new InvalidArgument('cannot delete value without a key');
     }
@@ -214,7 +217,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * Flushes / removes all the data from store, resets the stats and restarts the key/value expiry timeout
    * @returns a boolean, indicating if flushing the whole store was successful or not
    */
-  flushAll(): boolean {
+  async flushAll(): Promise<boolean> {
     this.#stopTTLValidation();
 
     this.#storeData = new Map();
@@ -230,7 +233,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * gets all the keys that are present in store
    * @returns all the keys from the store
    */
-  getKeys(): CKT[] {
+  async getKeys(): Promise<CKT[]> {
     return [...this.#storeData.keys()];
   }
 
@@ -238,7 +241,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
    * returns size(length) of the store
    * @returns how many key/value pairs are stored in store
    */
-  getSize(): number {
+  async getSize(): Promise<number> {
     return this.#storeData.size;
   }
 

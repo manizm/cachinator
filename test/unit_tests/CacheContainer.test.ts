@@ -99,12 +99,12 @@ describe('factory', () => {
     });
   });
 
-  it('should throw InvalidArgument when removing store with non-string key', () => {
-    getInvalidKeys().forEach(ik => {
-      expect(() => {
-        cacheStores.removeStore(ik as string);
-      }).toThrowError(InvalidArgument);
-    });
+  it('should throw InvalidArgument when removing store with non-string key', async () => {
+    for (const ik of getInvalidKeys()) {
+      await expect(cacheStores.removeStore(ik as string)).rejects.toThrowError(
+        InvalidArgument,
+      );
+    }
   });
 
   it('should throw error when getting store with invalid key', () => {
@@ -115,20 +115,20 @@ describe('factory', () => {
     });
   });
 
-  it('should throw error when removing store without a valid key', () => {
+  it('should throw error when removing store without a valid key', async () => {
     const key: unknown = undefined;
 
-    expect(() => {
-      cacheStores.removeStore(key as string);
-    }).toThrowError(InvalidArgument);
+    await expect(cacheStores.removeStore(key as string)).rejects.toThrowError(
+      InvalidArgument,
+    );
   });
 
-  it('should allow removing a store by valid key', () => {
+  it('should allow removing a store by valid key', async () => {
     const storeToRemoveKey = 'TO_REMOVE_STORE';
     cacheStores.addStore(storeToRemoveKey, createBasicStore());
     const keysBeforeRemoval = cacheStores.getKeys();
 
-    const storeIsRemoved = cacheStores.removeStore(storeToRemoveKey, true);
+    const storeIsRemoved = await cacheStores.removeStore(storeToRemoveKey, true);
 
     expect(storeIsRemoved).toEqual(true);
     expect(cacheStores.getKeys().length).toBeLessThan(keysBeforeRemoval.length);
@@ -137,10 +137,10 @@ describe('factory', () => {
     }).toThrowError(NotFound);
   });
 
-  it('should return true if no store found', () => {
+  it('should return true if no store found', async () => {
     const storeToRemoveKey = 'RANDOM_STORE_KEY';
 
-    const storeIsRemoved = cacheStores.removeStore(storeToRemoveKey);
+    const storeIsRemoved = await cacheStores.removeStore(storeToRemoveKey);
 
     expect(storeIsRemoved).toEqual(true);
     expect(() => {

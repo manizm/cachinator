@@ -61,7 +61,7 @@ export class CacheContainer {
    * @param key
    * @returns
    */
-  removeStore(key: string, shouldFlush = false): boolean {
+  async removeStore(key: string, shouldFlush = false): Promise<boolean> {
     if (typeof key !== 'string') {
       throw new InvalidArgument('a valid key is required to delete a store');
     }
@@ -71,7 +71,7 @@ export class CacheContainer {
     if (!store) return true;
 
     if (shouldFlush) {
-      store.flushAll();
+      await store.flushAll();
     }
 
     return this.#stores.delete(key);
