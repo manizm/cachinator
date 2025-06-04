@@ -162,7 +162,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
       throw new MaxSizeReached(
         `max keys limit: ${
           this.#options.maxKeys
-        } exhausted. Cannot add any new key`
+        } exhausted. Cannot add any new key`,
       );
     }
 

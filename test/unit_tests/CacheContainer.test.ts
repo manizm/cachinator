@@ -60,21 +60,21 @@ describe('factory', () => {
     const newKey = 'someNewKey';
     const keysBeforeNewStore = cacheStores.getKeys();
     const storesBeforeNewStore = keysBeforeNewStore.map(k =>
-      cacheStores.getStore(k as string)
+      cacheStores.getStore(k as string),
     );
 
     cacheStores.addStore(newKey, createBasicStore());
 
     const newKeys = cacheStores.getKeys();
     const storesAfterAddition = newKeys.map(k =>
-      cacheStores.getStore(k as string)
+      cacheStores.getStore(k as string),
     );
 
     expect(cacheStores.getStore(newKey)).toBeInstanceOf(MemoryStore);
     expect(newKeys.includes(newKey)).toEqual(true);
     expect(newKeys.length).toBeGreaterThan(keysBeforeNewStore.length);
     expect(storesBeforeNewStore.length).toBeLessThan(
-      storesAfterAddition.length
+      storesAfterAddition.length,
     );
     expect(storesAfterAddition.length - storesBeforeNewStore.length).toEqual(1);
 

@@ -1,4 +1,9 @@
 {
   "extends": "./node_modules/gts/",
-  "ignorePatterns": ["dev.build", "docs", "build"]
+  "ignorePatterns": [
+    "dev.build",
+    "docs",
+    "build",
+    "example"
+  ]
 }

@@ -26,7 +26,7 @@ export interface BaseCacheStrategy<DataType, CacheKeyType> {
     key: CacheKeyType,
     data: DataType,
     ignoreTTL?: boolean,
-    ttl?: number
+    ttl?: number,
   ): boolean;
 
   /**

@@ -26,7 +26,7 @@ describe('store', () => {
       defaultTTL: 0,
       maxKeys: 0,
       ttlCheckTimer: 0,
-    })
+    }),
   );
 
   it('should return a memory store', () => {
@@ -145,7 +145,7 @@ describe('store', () => {
         defaultTTL: 0,
         maxKeys: 2,
         ttlCheckTimer: 0,
-      })
+      }),
     );
 
     const store = cacheStores.getStore(storeKey);
