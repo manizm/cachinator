@@ -13,7 +13,7 @@ export interface BaseCacheStrategy<DataType, CacheKeyType> {
    * returns cached item from store by key
    * @param key identifier of cached data in store
    */
-  get(key: CacheKeyType): DataType | undefined;
+  get(key: CacheKeyType): Promise<DataType | undefined>;
 
   /**
    * sets data in the cache store
@@ -27,21 +27,26 @@ export interface BaseCacheStrategy<DataType, CacheKeyType> {
     data: DataType,
     ignoreTTL?: boolean,
     ttl?: number,
-  ): boolean;
+  ): Promise<boolean>;
 
   /**
    * hard deletes the identified data from store
    * @param key identifier of cached data in store
    */
-  del(key: CacheKeyType): boolean;
+  del(key: CacheKeyType): Promise<boolean>;
 
   /**
    * Remove all the keys/data from the store
    */
-  flushAll(): boolean;
+  flushAll(): Promise<boolean>;
 
   /**
    * returns total number of keys in the store
    */
-  getSize(): number;
+  getSize(): Promise<number>;
+
+  /**
+   * returns all keys stored in the cache
+   */
+  getKeys(): Promise<CacheKeyType[]>;
 }

@@ -6,6 +6,7 @@ A cache service factory written in Node.js and TypeScript. It ships with an in-m
 
 - **CacheContainer** – register and retrieve multiple stores by key
 - **MemoryStore** – in-memory cache with TTL support and hit/miss statistics
+- **RedisStore** – wrapper around a Redis client with TTL support and direct client access
 - Custom errors for invalid arguments, duplicate keys and size limits
 - Fully typed API with tests covering core behaviour
 
@@ -25,7 +26,7 @@ The test suite compiles the TypeScript sources and runs Jest. Execute:
 pnpm test
 ```
 
-All tests should pass (52 tests across four suites). The lint step that follows may fail on newer Node versions.
+All tests should pass (58 tests across six suites). The lint step that follows may fail on newer Node versions.
 
 ## Example
 
@@ -47,4 +48,4 @@ console.log(store.get(new Date()));
 - ~~add actual tests~~
 - get 100% code coverage
 - create detailed readme
-- create cache store for redis client
+- ~~create cache store for redis client~~
