@@ -178,7 +178,7 @@ export class MemoryStore<DT, CKT> implements BaseCacheStrategy<DT, CKT> {
 
     this.#storeData.set(key, data);
 
-    if (!ignoreTTL && expiresAt) {
+    if (!ignoreTTL && expiresAt !== undefined) {
       try {
         this.#expiringKeys.set(key, expiresAt);
       } catch (err) {
