@@ -33,8 +33,15 @@ jobs:
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
 
+    - name: Compile TypeScript
+      run: pnpm run compile
+
     - name: Run tests
-      run: pnpm test
+      run: pnpm run test:only
+
+    - name: Run linting
+      run: pnpm run lint
+      continue-on-error: true
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4

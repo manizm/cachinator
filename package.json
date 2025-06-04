@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "description": "A cache service factory written in nodejs and typescript",
   "main": "build/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "test": "jest --coverage",
+    "test:only": "jest --coverage",
     "test:watch": "jest --watch",
-    "lint": "gts lint",
+    "lint": "NODE_NO_WARNINGS=1 gts lint",
+    "lint:verbose": "NODE_OPTIONS=\"--trace-deprecation\" gts lint",
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
@@ -29,12 +34,12 @@
   },
   "homepage": "https://github.com/manizm/cachinator#readme",
   "devDependencies": {
-    "@types/jest": "^27.0.3",
-    "@types/node": "^22.7.5",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^22.15.29",
     "gts": "^6.0.2",
-    "jest": "^27.4.5",
-    "ts-jest": "^27.1.2",
-    "typedoc": "^0.22.17",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typedoc": "^0.25.9",
     "typescript": "^5.6.3"
   }
 }
