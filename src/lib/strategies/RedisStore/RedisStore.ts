@@ -56,7 +56,7 @@ export class RedisStore<DT> implements BaseCacheStrategy<DT, string> {
     try {
       return JSON.parse(data) as DT;
     } catch {
-      return (data as unknown) as DT;
+      return data as unknown as DT;
     }
   }
 
@@ -112,4 +112,3 @@ export class RedisStore<DT> implements BaseCacheStrategy<DT, string> {
     return this.#client.keys('*');
   }
 }
-

@@ -39,7 +39,7 @@ describe('store', () => {
     expect(store.getHits()).toBe(0);
     expect(store.getMisses()).toBe(0);
     expect(await store.getSize()).toBe(0);
-    expect((await store.getKeys())).toHaveLength(0);
+    expect(await store.getKeys()).toHaveLength(0);
   });
 
   it('should return undefined when tried to get non-inserted item', async () => {
@@ -150,7 +150,9 @@ describe('store', () => {
     await store.set(key, data);
     await store.set(new Date(), data);
 
-    await expect(store.set(new Date(), data)).rejects.toThrowError(MaxSizeReached);
+    await expect(store.set(new Date(), data)).rejects.toThrowError(
+      MaxSizeReached,
+    );
   });
 
   describe('expiration handling', () => {
@@ -160,10 +162,13 @@ describe('store', () => {
       const storeKey = 'TTL_TEST';
       cacheStores.addStore(
         storeKey,
-        new MemoryStore({defaultTTL: 50, maxKeys: 0, ttlCheckTimer: 10})
+        new MemoryStore({defaultTTL: 50, maxKeys: 0, ttlCheckTimer: 10}),
       );
 
-      const store = cacheStores.getStore(storeKey) as MemoryStore<MDataType, Date>;
+      const store = cacheStores.getStore(storeKey) as MemoryStore<
+        MDataType,
+        Date
+      >;
       const {key, data} = createBasic();
 
       await store.set(key, data, false, 30);
@@ -184,10 +189,13 @@ describe('store', () => {
       const storeKey = 'CUSTOM_TTL_TEST';
       cacheStores.addStore(
         storeKey,
-        new MemoryStore({defaultTTL: 0, maxKeys: 0, ttlCheckTimer: 10})
+        new MemoryStore({defaultTTL: 0, maxKeys: 0, ttlCheckTimer: 10}),
       );
 
-      const store = cacheStores.getStore(storeKey) as MemoryStore<MDataType, Date>;
+      const store = cacheStores.getStore(storeKey) as MemoryStore<
+        MDataType,
+        Date
+      >;
       const {key, data} = createBasic();
 
       await store.set(key, data, false, 30);

@@ -128,7 +128,10 @@ describe('factory', () => {
     cacheStores.addStore(storeToRemoveKey, createBasicStore());
     const keysBeforeRemoval = cacheStores.getKeys();
 
-    const storeIsRemoved = await cacheStores.removeStore(storeToRemoveKey, true);
+    const storeIsRemoved = await cacheStores.removeStore(
+      storeToRemoveKey,
+      true,
+    );
 
     expect(storeIsRemoved).toEqual(true);
     expect(cacheStores.getKeys().length).toBeLessThan(keysBeforeRemoval.length);
