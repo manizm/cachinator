@@ -58,5 +58,5 @@ pnpm add redis
 
 - ~~add actual tests~~
 - get 100% code coverage
-- create detailed readme
+- ~~create detailed readme~~
 - ~~create cache store for redis client~~
